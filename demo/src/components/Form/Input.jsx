@@ -6,12 +6,12 @@ attribut = {
 }
 */
 const Input = ({attribut,handleChange}) => {
-    return (
-        <input 
-            {...attribut}
-            onChange={(e) => handleChange(attribut.key, e.target.value)}
-        />    
-    )
+    const onChange = (e) => {
+        const value =  e.target.type === 'checkbox' ? e.target.checked : e.target.value
+        handleChange(attribut.key, value)
+    }
+    
+    return <input {...attribut} onChange={onChange} />
 }
 
 export default Input

@@ -7,6 +7,13 @@ import Deconnexion from "../components/Deconnexion";
 import UploadFile from "../components/UploadFile";
 import Form from "../components/Form/Form";
 
+const input = [
+    'text',
+    { type:'text', value:'text'},
+    { type:'checkbox', label:'checkbox', checked:true},
+    { type:'submit', value:'text'}
+]
+
 export const routes = [
     { path:'/', element:<Home /> },
     { path:'/register', element:<Register /> },
@@ -15,7 +22,7 @@ export const routes = [
     { path:'/admin', element:<Admin /> },
     { path:'/deconnexion', element:<Deconnexion /> },
     { path:'/upload', element:<UploadFile /> },
-    { path:'/form', element:<Form input={['text',{ type:'text', value:'text'},{ type:'submit', value:'text'}]} /> }
+    { path:'/form', element:<Form input={input} /> }
 ]
 
 // route reserver au personne connecter

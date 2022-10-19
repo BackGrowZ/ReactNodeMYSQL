@@ -30,11 +30,28 @@ const Form = ({
     
     const [inputs, setInputs] = useState(input)
     
+    // mise en forme des input a l'initialisation
+    useEffect(() => {
+        const data = [...inputs]
+        inputs.map((e,i) => {
+        // Si la valeur est un object on le laisse sinon on creer les attribut
+            if(typeof e !== OBJECT){
+                // Si c'est un string qui contient le type on creer les attribut avec ce type
+                // sinon on creer les attribut avec le type text
+               data[i] = defaultValue.type.includes(e) ?
+                setAttribut(e) : setAttribut(TEXT)
+            }
+        })
+        setInputs(data)
+    },[])
+    
     // Validation formulaire
     const onSubmit = (e) => {
         e.preventDefault()
-        submit()
-        clear && clearForm(inputs)
+        if(!isEmpty()){
+          submit()
+          clear && clearForm(inputs)
+        } 
     }
     
     // retourne false si le type est submit ou reset
@@ -52,28 +69,26 @@ const Form = ({
         setInputs(result)
     }
     
+    // verrifie si les input required sont vide
+    const isEmpty = () => {
+        let result = false
+        inputs.map((e,i) => {
+            if(e.required && e.value === "") result = true
+        })
+        return result
+    }
+    
     // ecriture dans les input
     const handleChange = (id, value) => {
         const newInputs = [...inputs]
-        newInputs[id].value = value
+        if(newInputs[id].type === "checkbox"){
+            newInputs[id].checked = value
+            newInputs[id].value = value
+        } else {
+            newInputs[id].value = value
+        }
         setInputs(newInputs)
     }
-    
-    // mise en forme des input a l'initialisation
-    useEffect(() => {
-        const data = [...inputs]
-        inputs.map((e,i) => {
-        // Si la valeur est un object on le laisse sinon on creer les attribut
-            if(typeof e !== OBJECT){
-                // Si c'est un string qui contient le type on creer les attribut avec ce type
-                // sinon on creer les attribut avec le type text
-               data[i] = defaultValue.type.includes(e) ?
-                setAttribut(e) : setAttribut(TEXT)
-            }
-        })
-        setInputs(data)
-    },[])
-    
     
     // assignations des attribut
     const setAttribut = (attribut) => {
@@ -94,17 +109,15 @@ const Form = ({
     
     return(
         <Header onSubmit={onSubmit}>
-            { 
-                inputs.map((e,i) => {  
-                    const attribut = setAttribut(e,i)
-                    attribut.key = i
-                        return (
-                            <Label key={i} texte={e.label}>
-                                <Input handleChange={handleChange} attribut={attribut}/>
-                            </Label>
-                        )
-                })
-            }
+            { inputs.map((e,i) => {  
+                const attribut = setAttribut(e,i)
+                attribut.key = i
+                return (
+                    <Label key={i} texte={e.label}>
+                        <Input handleChange={handleChange} attribut={attribut}/>
+                    </Label>
+                )
+            })}
         </Header>
     )
 }
