@@ -17,6 +17,9 @@ const connexionSubmit = (req,res) => {
                     res.json({response:false, message:msgError});
                 } else {
                     const admin = user[0].role_id === 1 ? false : true
+                    req.session.admin = admin
+                    req.session.logged = true
+                    console.log(req.session)
                     res.json({response:true, admin});
                 }
             });

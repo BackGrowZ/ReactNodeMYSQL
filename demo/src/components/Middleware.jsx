@@ -22,7 +22,7 @@ const Middleware = ({children}) => {
                 navigate('/')
             }
         }
-    }, []);
+    }, [currentPath]);
 
     return(
         <Fragment>
