@@ -22,7 +22,7 @@ export const routes = [
     { path:'/admin', element:<Admin /> },
     { path:'/deconnexion', element:<Deconnexion /> },
     { path:'/upload', element:<UploadFile /> },
-    { path:'/form', element:<Form input={input} /> }
+    { path:'/form', element:<Form template="register" /> }
 ]
 
 // route reserver au personne connecter
