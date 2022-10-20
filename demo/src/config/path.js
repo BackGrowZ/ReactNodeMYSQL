@@ -8,10 +8,11 @@ import UploadFile from "../components/UploadFile";
 import Form from "../components/Form/Form";
 
 const input = [
-    'text',
-    { type:'text', value:'text'},
-    { type:'checkbox', label:'checkbox', checked:true},
-    { type:'submit', value:'text'}
+    // 'text',
+    // { type:'text', value:'text'},
+    // { type:'checkbox', label:'checkbox', checked:true},
+    { type:'select', label:'checkbox', options:[{value:0, label:"Option 0"},{value:1}]},
+    // { type:'submit', value:'text'}
 ]
 
 export const routes = [
@@ -22,7 +23,7 @@ export const routes = [
     { path:'/admin', element:<Admin /> },
     { path:'/deconnexion', element:<Deconnexion /> },
     { path:'/upload', element:<UploadFile /> },
-    { path:'/form', element:<Form template="register" /> }
+    { path:'/form', element:<Form input={input} /> }
 ]
 
 // route reserver au personne connecter

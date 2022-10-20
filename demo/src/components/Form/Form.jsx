@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react"
 import Header from './Header'
-import Input from './Input'
+import Input from './Inputs/Input'
 import Label from './Label'
 import {OBJECT, STRING, TEXT, defaultValue} from './constante.js'
 
@@ -97,8 +97,8 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     // assignations des attribut
     const setAttribut = (attribut) => {
         console.log(attribut)
-        const key = inputs.length-1
-        let result = { type:TEXT, key, value:defaultValue.value[attribut] || ''}
+        const uid = inputs.length-1
+        let result = { type:TEXT, uid, value:defaultValue.value[attribut] || ''}
         
         // verrification du type pour mettre les attribut 
         if(typeof attribut === STRING && defaultValue.type.includes(attribut)){
@@ -121,7 +121,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         {console.log(inputs)}
             { inputs.map((e,i) => {  
                 const attribut = setAttribut(e,i)
-                attribut.key = i
+                attribut.uid = i
                 return (
                     <Label key={i} checkbox={isCheckbox(e)} texte={e.label}>
                         <Input handleChange={handleChange} attribut={attribut}/>

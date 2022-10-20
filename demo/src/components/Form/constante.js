@@ -14,6 +14,8 @@ export const defaultValue = {
     form:{
         login:["email", {type:"password", label:"Votre mot de passe"}],
         register:["email", {type:"password", label:"Votre mot de passe"}, {type:"password", label:"Confirmez votre mot de passe"}],
+        contact:[{type:'textarea', label:'commentaire'}]
+        
     },
     submit:() => console.log('test'),
     clear:false
