@@ -6,6 +6,7 @@ import isLogged from "../controllers/isLogged.js";
 import uploadFile from "../controllers/uploadFile.js";
 import getUsersRole from "../controllers/getUsersRole.js";
 import getPanier from "../controllers/getPanier.js";
+import test from "../controllers/test.js";
 
 
 const router = express.Router();
@@ -31,6 +32,8 @@ router.post("/changeRole", defaultJson);
 router.get("/panier/:id", getPanier);
 
 router.get("/getUsersRole", getUsersRole);
+
+router.get("/test", test);
 
 /*
 

@@ -7,6 +7,7 @@ import {OBJECT, STRING, TEXT, defaultValue} from './constante.js'
 const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.clear, template = null}) => {
     
     const [inputs, setInputs] = useState(input)
+    const [errors, setErrors] = useState([]) // TODO
     const [haveInputFile, setHaveInputFile] = useState(false)
     const [updating, setUpdating] = useState(false)
     
@@ -30,8 +31,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
                 if(typeof e !== OBJECT){
                     // Si c'est un string qui contient le type on creer les attribut avec ce type
                     // sinon on creer les attribut avec le type text
-                   data[i] = defaultValue.type.includes(e) ?
-                    setAttribut(e) : setAttribut(TEXT)
+                    data[i] = defaultValue.type.includes(e) ? setAttribut(e) : setAttribut(TEXT)
                 }
             })
             setInputs(data)
@@ -118,7 +118,6 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     
     return(
         <Header enctype={haveInputFile} onSubmit={onSubmit}>
-        {console.log(inputs)}
             { inputs.map((e,i) => {  
                 const attribut = setAttribut(e,i)
                 attribut.uid = i
