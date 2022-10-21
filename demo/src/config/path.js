@@ -8,8 +8,9 @@ import UploadFile from "../components/UploadFile";
 import Form from "../components/Form/Form";
 
 const input = [
-    // 'text',
-    // { type:'text', value:'text'},
+    'password',
+    "text",
+    // { type:'text', value:'text', pattern:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, patternError:'Adresse email invalide'},
     // { type:'checkbox', label:'checkbox', checked:true},
     { type:'select', label:'checkbox', options:[{value:0, label:"Option 0"},{value:1}]},
     // { type:'submit', value:'text'}

@@ -1,10 +1,11 @@
+import {capitalize} from '../../utils/utils.js'
 const Label = ({children, texte = "", required=true, checkbox=false}) => {
     const labelText = required && texte !== "" ? texte+"*" : texte
     
     if(!checkbox){
         return (
             <label>
-                {labelText}
+                {capitalize(labelText)}
                 {children}
             </label>
         )
@@ -12,7 +13,7 @@ const Label = ({children, texte = "", required=true, checkbox=false}) => {
         return (
             <label>
                 {children}
-                {labelText}
+                {capitalize(labelText)}
             </label>
         )
     }

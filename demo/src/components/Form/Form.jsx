@@ -13,7 +13,6 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     
     // met les input de la template form demander
     useEffect(() => {
-        console.log(0)
         if(template){
             let newInput = [...defaultValue.form[template]]
             setInputs(newInput)
@@ -27,17 +26,15 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
             const data = [...inputs]
             inputs.map((e,i) => {
             // Si la valeur est un object on le laisse sinon on creer les attribut
-                    console.log(e)
                 if(typeof e !== OBJECT){
                     // Si c'est un string qui contient le type on creer les attribut avec ce type
                     // sinon on creer les attribut avec le type text
                     data[i] = defaultValue.type.includes(e) ? setAttribut(e) : setAttribut(TEXT)
                 }
             })
+            initErrors()
             setInputs(data)
-        } else {
-            console.log('nop')
-        }
+        } 
     },[updating])
     
     // determine si il y a un input de type file
@@ -52,7 +49,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     // Validation formulaire
     const onSubmit = (e) => {
         e.preventDefault()
-        if(!isEmpty()){
+        if(!isEmpty() && (passwordVerrify() === true || passwordVerrify() === undefined)){
           submit()
           clear && clearForm(inputs)
         } 
@@ -67,7 +64,6 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     const clearForm = (inputs) => {
         const result = [...inputs]
         result.map((e,i) => {
-            console.log(e)
             e.value= notButton(e) ? defaultValue.value[e.type] : e.value
         })
         setInputs(result)
@@ -91,18 +87,57 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         } else {
             newInputs[id].value = value
         }
+        removeError(id)
         setInputs(newInputs)
+    }
+    
+    const initErrors = () => {
+        const result = []
+        inputs.map((e,i) => {
+            result.push({id:i,msg:"",state:false})
+        })
+        setErrors(result)
+    }
+    
+    const createError = (id,msg="") => {
+        const result = [...errors]
+        result[id].msg = msg
+        result[id].state = true
+        setErrors(result)
+    }
+    
+    const removeError = (id) => {
+        const result = [...errors]
+        result[id].msg = ""
+        result[id].state = false
+        setErrors(result)
+    }
+    
+    // verrifie 
+    const checkPattern = (id, value) => {
+        const {pattern, patternError} = inputs[id]
+        const regex = new RegExp(pattern)
+        if(pattern){
+            if(!regex.test(value)){
+                createError(id, patternError)
+            } else {
+                removeError(id)
+            }
+        }
     }
     
     // assignations des attribut
     const setAttribut = (attribut) => {
-        console.log(attribut)
         const uid = inputs.length-1
         let result = { type:TEXT, uid, value:defaultValue.value[attribut] || ''}
         
         // verrification du type pour mettre les attribut 
         if(typeof attribut === STRING && defaultValue.type.includes(attribut)){
-            result = {...result, type:attribut, label:attribut }
+            if(defaultValue.input[attribut]){
+                result = {...result, label:attribut, ...defaultValue.input[attribut] }
+            } else {
+                result = {...result, type:attribut, label:attribut }
+            }
         } else if(typeof attribut === OBJECT) {
             result = {...result,...attribut}
         }
@@ -115,6 +150,29 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         return e.type === "checkbox"
     }
     
+    // verrifie si il y a deux input de type password
+    // si il sont identique return true
+    // si il sont PAS identique return false 
+    // si il n'y a pas deux input de type password return undefined
+    const passwordVerrify = () => {
+        let password
+        let password2
+        inputs.map((e,i) => {
+            if(e.type === "password"){
+                if(!password){
+                  password = e.value  
+                } else {
+                    password2 = e.value
+                }
+            }
+        })
+        if(password && password2){
+            return password === password2
+        } else {
+            return undefined
+        }
+    }
+    
     
     return(
         <Header enctype={haveInputFile} onSubmit={onSubmit}>
@@ -123,7 +181,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
                 attribut.uid = i
                 return (
                     <Label key={i} checkbox={isCheckbox(e)} texte={e.label}>
-                        <Input handleChange={handleChange} attribut={attribut}/>
+                        <Input handleChange={handleChange} onBlur={checkPattern} errors={errors[i]} attribut={attribut}/>
                     </Label>
                 )
             })}
