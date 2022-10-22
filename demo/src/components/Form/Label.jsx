@@ -1,11 +1,11 @@
 import {capitalize} from '../../utils/utils.js'
-const Label = ({children, texte = "", required=true, checkbox=false}) => {
+const Label = ({children, texte = "", required, checkbox=false}) => {
     const labelText = required && texte !== "" ? texte+"*" : texte
     
     if(!checkbox){
         return (
             <label>
-                {capitalize(labelText)}
+                <p>{capitalize(labelText)}</p>
                 {children}
             </label>
         )

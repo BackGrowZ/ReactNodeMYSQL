@@ -1,8 +1,9 @@
 import {Fragment} from 'react'
 import Textarea from "./Textarea"
 import Select from "./Select"
+import Button from "./Button"
 
-const Input = ({attribut, handleChange, errors, onBlur}) => {
+const Input = ({attribut, handleChange, errors, onBlur, disabledSubmit}) => {
     const {type} = attribut
     
     const onChange = (e) => {
@@ -19,14 +20,16 @@ const Input = ({attribut, handleChange, errors, onBlur}) => {
     delete filtredAttribut.patternError
     
     if(type === "textarea") {
-        return <Textarea attribut={filtredAttribut} errors={errors} onChange={onChange}></Textarea>
+        return <Textarea attribut={filtredAttribut} errors={errors} onBlur={onBlur} onChange={onChange}></Textarea>
     } else if (type === "select"){
         return <Select attribut={filtredAttribut} errors={errors} onChange={onChange}></Select>
-    } else {
+    } else if (type === "submit" || type === "reset"){
+        return <Button attribut={filtredAttribut} disabledSubmit={disabledSubmit} />
+    }else {
         return (
             <Fragment>
                 <input {...filtredAttribut} style={errorStyle} onBlur={() => onBlur(attribut.uid,attribut.value)} onChange={onChange} />
-                {showError() && <p>{errors.msg}</p>}
+                {showError() && <p className='error'>{errors.msg}</p>}
             </Fragment>
         )
     }

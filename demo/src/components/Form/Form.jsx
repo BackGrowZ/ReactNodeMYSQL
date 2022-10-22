@@ -10,6 +10,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     const [errors, setErrors] = useState([]) // TODO
     const [haveInputFile, setHaveInputFile] = useState(false)
     const [updating, setUpdating] = useState(false)
+    const [disabledSubmit, setDisabledSubmit] = useState(false)
     
     // met les input de la template form demander
     useEffect(() => {
@@ -29,7 +30,9 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
                 if(typeof e !== OBJECT){
                     // Si c'est un string qui contient le type on creer les attribut avec ce type
                     // sinon on creer les attribut avec le type text
-                    data[i] = defaultValue.type.includes(e) ? setAttribut(e) : setAttribut(TEXT)
+                    data[i] = defaultValue.type.includes(e) ? setAttribut(e,i) : setAttribut(TEXT,i)
+                } else {
+                    data[i] = {...data[i], uid:i}
                 }
             })
             initErrors()
@@ -46,10 +49,24 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         setHaveInputFile(result)
     },[inputs])
     
+    useEffect(() => {
+        let result = false
+        for(let i = 0; i<=errors.length; i++){
+            if(i === errors.length){
+                setDisabledSubmit(result)
+            } else {
+                if(errors[i].state){
+                    result = true
+                }
+            }
+        }
+    },[errors])
+    
     // Validation formulaire
     const onSubmit = (e) => {
         e.preventDefault()
-        if(!isEmpty() && (passwordVerrify() === true || passwordVerrify() === undefined)){
+        inputs.forEach( el => checkValue(el.uid, el.value))
+        if(!isEmpty() && (passwordVerrify() === true && !disabledSubmit)){
           submit()
           clear && clearForm(inputs)
         } 
@@ -99,7 +116,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         setErrors(result)
     }
     
-    const createError = (id,msg="") => {
+    const createError = (id, msg = "") => {
         const result = [...errors]
         result[id].msg = msg
         result[id].state = true
@@ -113,22 +130,56 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         setErrors(result)
     }
     
-    // verrifie 
+    const checkValue = (id, value) => {
+        console.log(id)
+        console.log(value)
+        checkPattern(id, value)
+        minLength(id, value) 
+        maxLength(id, value)
+        isRequired(id, value)
+    }
+    
+    const minLength = (id, value="") => {
+        const {minLength} = inputs[id]
+        if(minLength){
+            const result = value.length >= minLength
+            if(!result) createError(id,`Minimum ${minLength} caracteres`)
+            return result
+        }
+        return true
+    }
+    
+    const maxLength = (id, value="") => {
+        const {maxLength} = inputs[id]
+        if(maxLength){
+            const result = value.length <= maxLength
+            if(!result) createError(id,`Maximum ${maxLength} caracteres`)
+            return result
+        }
+        return true
+    }
+    
+    const isRequired = (id, value) => {
+        const {required} = inputs[id]
+        if(required && value === ""){
+            createError(id, 'Champ obligatoire')
+        }
+    }
+    
     const checkPattern = (id, value) => {
-        const {pattern, patternError} = inputs[id]
-        const regex = new RegExp(pattern)
-        if(pattern){
+        if(inputs[id].pattern){
+            const {pattern, patternError} = inputs[id]
+            const regex = new RegExp(pattern)
             if(!regex.test(value)){
-                createError(id, patternError)
-            } else {
-                removeError(id)
+                const msgError = patternError || "Invalide"
+                createError(id, msgError)
             }
         }
     }
     
     // assignations des attribut
-    const setAttribut = (attribut) => {
-        const uid = inputs.length-1
+    const setAttribut = (attribut,id) => {
+        const uid = id
         let result = { type:TEXT, uid, value:defaultValue.value[attribut] || ''}
         
         // verrification du type pour mettre les attribut 
@@ -141,7 +192,6 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         } else if(typeof attribut === OBJECT) {
             result = {...result,...attribut}
         }
-        
         return result
     }
     
@@ -151,9 +201,8 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
     }
     
     // verrifie si il y a deux input de type password
-    // si il sont identique return true
+    // si il sont identique OU si il n'y a pas deux input de type password return true
     // si il sont PAS identique return false 
-    // si il n'y a pas deux input de type password return undefined
     const passwordVerrify = () => {
         let password
         let password2
@@ -169,7 +218,7 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         if(password && password2){
             return password === password2
         } else {
-            return undefined
+            return true
         }
     }
     
@@ -178,10 +227,16 @@ const Form = ({input = [], submit = defaultValue.submit, clear = defaultValue.cl
         <Header enctype={haveInputFile} onSubmit={onSubmit}>
             { inputs.map((e,i) => {  
                 const attribut = setAttribut(e,i)
-                attribut.uid = i
+                console.log(attribut)
                 return (
-                    <Label key={i} checkbox={isCheckbox(e)} texte={e.label}>
-                        <Input handleChange={handleChange} onBlur={checkPattern} errors={errors[i]} attribut={attribut}/>
+                    <Label key={i} checkbox={isCheckbox(e)} required={e.required} texte={e.label}>
+                        <Input 
+                            handleChange={handleChange}
+                            disabledSubmit={disabledSubmit}
+                            onBlur={checkValue}
+                            errors={errors[i]}
+                            attribut={attribut}
+                        />
                     </Label>
                 )
             })}

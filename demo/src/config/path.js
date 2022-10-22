@@ -10,10 +10,14 @@ import Form from "../components/Form/Form";
 const input = [
     'password',
     "text",
+    "email",
+    {type:"text", label:'test', required:true},
+    {type:"text", label:"max1", maxLength:'1'},
+    {type:"text", label:"min1", minLength:'1'},
     // { type:'text', value:'text', pattern:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, patternError:'Adresse email invalide'},
     // { type:'checkbox', label:'checkbox', checked:true},
     { type:'select', label:'checkbox', options:[{value:0, label:"Option 0"},{value:1}]},
-    // { type:'submit', value:'text'}
+    { type:'submit', value:'text'}
 ]
 
 export const routes = [
