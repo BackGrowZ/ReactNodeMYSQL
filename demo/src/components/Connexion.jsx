@@ -23,7 +23,6 @@ const Connexion = () => {
         axios.post(`${BASE_URL}/connexion`, dataUser)
         .then((res) => {
             // si tout ce passe bien :
-            console.log(res);
             if(res.data.response) {
                 localStorage.setItem('jwtToken', res.data.token)
                 axios.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token

@@ -3,7 +3,6 @@ import { ReducerContext } from "../reducer/reducer.js";
 
 const Home = () => {
     const [state, dispatch] = React.useContext(ReducerContext)
-    console.log(state)
     
     return (
         <div>

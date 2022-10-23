@@ -12,13 +12,10 @@ const NavBar = (props) => {
   
   useEffect(() => {
     const token = localStorage.getItem("jwtToken")
-    console.log(token)
     if(!state.login && token){
       axios.post(`${BASE_URL}/isLogged`,{token})
       .then((res) => {
-        console.log(res)
         if(res.data.token){
-          console.log(res.data.token === token)
           axios.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
         }
         res.data.logged && dispatch({type:LOGIN})
