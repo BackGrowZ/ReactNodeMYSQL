@@ -5,15 +5,22 @@ import BASE_URL from '../config/API.js';
 import {LOGIN,ADMIN} from '../config/constante.js';
 import axios from 'axios';
 
+
 const NavBar = (props) => {
   
   const [state, dispatch] = useContext(ReducerContext)
   
   useEffect(() => {
-    if(!state.login){
-      axios.get(`${BASE_URL}/isLogged`)
+    const token = localStorage.getItem("jwtToken")
+    console.log(token)
+    if(!state.login && token){
+      axios.post(`${BASE_URL}/isLogged`,{token})
       .then((res) => {
         console.log(res)
+        if(res.data.token){
+          console.log(res.data.token === token)
+          axios.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
+        }
         res.data.logged && dispatch({type:LOGIN})
         res.data.admin && dispatch({type:ADMIN})
       })
@@ -47,6 +54,11 @@ const NavBar = (props) => {
         }
         {state.login && 
           <Fragment>
+            <li>
+              <NavLink to="/test">
+                test
+              </NavLink>
+            </li>
             <li>
               <NavLink to="/profil">
                 PROFIL

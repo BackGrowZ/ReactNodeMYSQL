@@ -25,6 +25,8 @@ const Connexion = () => {
             // si tout ce passe bien :
             console.log(res);
             if(res.data.response) {
+                localStorage.setItem('jwtToken', res.data.token)
+                axios.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
                 dispatch({type:LOGIN})
                 res.data.admin && dispatch({type:ADMIN})
                 navigate("/")

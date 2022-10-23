@@ -1,32 +1,42 @@
 import bcrypt from 'bcrypt';
-import {pool} from '../config/database.js';
+import {asyncQuery} from '../config/database.js';
+import {generateToken} from "../controllers/token.js"
 
+const getUserData = async (email) => {
+    let getUserSQL = "SELECT * FROM users WHERE email = ?";
+    const userDataSQL = await asyncQuery(getUserSQL,[email])
+    
+    return userDataSQL[0]
+}
 
-const connexionSubmit = (req,res) => {
-    let getPasswordSQL = "SELECT password,role_id FROM users WHERE email = ?";
+const isAdmin = (role_id) => {
+    const ADMIN = 2
+    const admin = role_id === ADMIN
     
-    const msgError = "identifiant ou mot de passe incorrect"
+    return admin
+}
+
+const generateResponse = async (userDataSQL,passwordMatch) => {
+    const admin = isAdmin(userDataSQL.role_id)
+    const userData = { 
+        email:userDataSQL.email,
+        user:true,
+        admin
+    }
+    const token = await generateToken(userData)
+    const sucessJson = {response:true, admin, token}
+    const failJson = {response:false, message:"identifiant ou mot de passe incorrect"}
     
-    pool.query(getPasswordSQL, [req.body.mail], (error, user, fields) => {
-        if (error) throw error;
-        
-        if(user[0]) {
-            bcrypt.compare(req.body.password, user[0].password, function(err, result) {
-                if (err) throw err;
-                if(result === false) {
-                    res.json({response:false, message:msgError});
-                } else {
-                    const admin = user[0].role_id === 1 ? false : true
-                    req.session.admin = admin
-                    req.session.logged = true
-                    console.log(req.session)
-                    res.json({response:true, admin});
-                }
-            });
-        }else {
-            res.json({response:false, message:msgError});
-        }
-    });
-};
+    return passwordMatch ? sucessJson : failJson
+}
+
+const connexionSubmit = async (req, res) => {
+    const {password, mail} = req.body
+    const userDataSQL = await getUserData(mail)
+    const passwordMatch = await bcrypt.compare(password, userDataSQL.password)
+    const response = await generateResponse(userDataSQL, passwordMatch)
+    
+    res.json(response)
+}
 
 export default connexionSubmit;

@@ -3,6 +3,7 @@ import cors from "cors"
 import bodyParser from 'body-parser'
 import router from './router/router.js';
 import session from 'express-session';
+import {middleware} from './controllers/verifyToken.js'
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use(session({
 	saveUninitialized: true,
 	cookie: {maxAge: 3600000}
 }))
+
+app.use(middleware)
 
 app.use('/', router)
 

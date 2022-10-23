@@ -17,11 +17,23 @@ const defaultJson = (req, res) => {
     });
 }
 
+router.get("/api/adminPath", (req,res) => {
+    res.json({response:true, msg:'admin path'})
+})
+
+router.get("/api/userPath", (req,res) => {
+    res.json({response:true, msg:'user path'})
+})
+
+router.get("/api/publicPath", (req,res) => {
+    res.json({response:true, msg:'public path'})
+})
+
 router.post("/api/register", registerSubmit); // route back de l'enregistrement de l'utilisateur dans la BDD
 
 router.post("/api/connexion", connexionSubmit); // route back de la connexion de l'utilisateur
 
-router.get("/api/isLogged", isLogged); // route back de la connexion de l'utilisateur
+router.post("/api/isLogged", isLogged); // route back de la connexion de l'utilisateur
 
 router.post("/api/uploadFile", uploadFile); // route back de la connexion de l'utilisateur
 

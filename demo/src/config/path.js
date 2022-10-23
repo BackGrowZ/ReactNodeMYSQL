@@ -3,6 +3,7 @@ import Connexion from "../components/Connexion";
 import Register from "../components/Register";
 import Profil from "../components/Profil";
 import Admin from "../components/Admin";
+import Test from "../components/Test";
 import Deconnexion from "../components/Deconnexion";
 import UploadFile from "../components/UploadFile";
 import Form from "../components/Form/Form";
@@ -28,7 +29,8 @@ export const routes = [
     { path:'/admin', element:<Admin /> },
     { path:'/deconnexion', element:<Deconnexion /> },
     { path:'/upload', element:<UploadFile /> },
-    { path:'/form', element:<Form input={input} /> }
+    { path:'/form', element:<Form input={input} /> },
+    { path:'/test', element:<Test /> }
 ]
 
 // route reserver au personne connecter

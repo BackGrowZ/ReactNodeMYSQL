@@ -1,10 +1,11 @@
-import {useContext, useEffect, Fragment} from "react"
+import {useContext, useEffect, useState, Fragment} from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { ReducerContext } from "../reducer/reducer.js";
 import { userPath, adminPath } from '../config/path.js'
 
 const Middleware = ({children}) => {
     const [state, dispatch] = useContext(ReducerContext)
+    const [show, setShow] = useState(false)
     const navigate = useNavigate();
 
     const location = useLocation()
@@ -16,6 +17,7 @@ const Middleware = ({children}) => {
                 navigate('/')
             }
         }
+        setShow(true)
 
         if(adminPath.includes(currentPath)){
             if(!state.admin){
@@ -26,7 +28,7 @@ const Middleware = ({children}) => {
 
     return(
         <Fragment>
-            {children}
+            {show && children}
         </Fragment>
     )
 }
