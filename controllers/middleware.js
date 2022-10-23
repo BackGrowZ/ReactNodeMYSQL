@@ -47,4 +47,4 @@ const middleware = async (req, res, next) => {
     }
 }
 
-export {middleware, verifyToken}
+export default middleware

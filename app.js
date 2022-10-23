@@ -3,7 +3,7 @@ import cors from "cors"
 import bodyParser from 'body-parser'
 import router from './router/router.js';
 import session from 'express-session';
-import {middleware} from './controllers/verifyToken.js'
+import middleware from './controllers/middleware.js'
 
 const app = express();
 
