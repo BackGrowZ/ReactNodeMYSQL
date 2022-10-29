@@ -3,6 +3,7 @@ import {verifyToken} from './token.js'
 
 const ADMIN = 'admin'
 const USER = 'user'
+const PUBLIC = 'public'
 
 const protectedPath = (pathname) => {
     const adminPath = ['adminPath'];
@@ -10,41 +11,32 @@ const protectedPath = (pathname) => {
     
     const protectedAdmin = adminPath.includes(pathname)
     const protectedUser = userPath.includes(pathname)
+    let type = protectedAdmin ? ADMIN : protectedUser ? USER : PUBLIC
     
-    if(protectedAdmin){
-        return ADMIN
-    } else if(protectedUser){
-        return USER
-    } else {
-        return false
-    }
+    return type
 }
 
 const accesAutorized = (pathname,userData) => {
-    if(protectedPath(pathname) === ADMIN){
-        if(userData){
-            return userData.admin
-        }
-        return false
-    } else if(protectedPath(pathname) === USER) {
-        if(userData){
-            return userData.user
-        }
-        return false
-    } else {
-        return true
-    }
+    const typePath = protectedPath(pathname)
+    
+    const adminAcess = userData && userData.admin ? typePath === ADMIN : false
+    const userAcess = userData && userData.user ? typePath === USER : false
+    const publicAcess = typePath === PUBLIC 
+    
+    return (publicAcess || adminAcess || userAcess) ? true : false 
+
 }
 
 const middleware = async (req, res, next) => {
-    let pathname = parseurl(req).pathname.split('/api/');
-    const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : null
+    const  pathname = parseurl(req).pathname.split('/')[2];
+    const headersAuth =  req.headers['authorization']
+    const token = headersAuth ? headersAuth.split(' ')[1] : null
     const userData = await verifyToken(token)
-    if(accesAutorized(pathname[1],userData)){
-        next()
-    } else {
-        res.json({response:false, msg:'acces refuser'})
-    }
+    const acces = accesAutorized(pathname,userData)
+    const response = {response:false, msg:'acces refuser'}
+    
+    return acces ? next() : res.json(response)
+    
 }
 
 export default middleware

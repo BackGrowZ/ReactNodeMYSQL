@@ -21,11 +21,8 @@ const Register = () => {
         e.preventDefault();
         axios.post(`${BASE_URL}/register`, data)
         .then((res) => {
-            if(res.data.response === true) {
-                navigate("/connexion")
-            } else {
-                window.alert("e-mail déjà utilisé")
-            }
+            console.log(res.data)
+            res.data.response ? navigate("/connexion") : window.alert("e-mail déjà utilisé")
         })
         .catch((err) => {
             console.log(err);

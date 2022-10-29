@@ -9,32 +9,25 @@ const getUserData = async (email) => {
     return userDataSQL[0]
 }
 
-const isAdmin = (role_id) => {
-    const ADMIN = 2
-    const admin = role_id === ADMIN
-    
-    return admin
-}
-
-const generateResponse = async (userDataSQL,passwordMatch) => {
-    const admin = isAdmin(userDataSQL.role_id)
+const generateResponse = async (userDataSQL) => {
+    const ADMIN_ROLE_ID = 2
+    const admin = userDataSQL.role_id === ADMIN_ROLE_ID
     const userData = { 
         email:userDataSQL.email,
         user:true,
         admin
     }
     const token = await generateToken(userData)
-    const sucessJson = {response:true, admin, token}
-    const failJson = {response:false, message:"identifiant ou mot de passe incorrect"}
     
-    return passwordMatch ? sucessJson : failJson
+    return {response:true, admin, token}
 }
 
 const connexionSubmit = async (req, res) => {
     const {password, mail} = req.body
+    const failJson = {response:false, message:"identifiant ou mot de passe incorrect"}
     const userDataSQL = await getUserData(mail)
-    const passwordMatch = await bcrypt.compare(password, userDataSQL.password)
-    const response = await generateResponse(userDataSQL, passwordMatch)
+    const passwordMatch = userDataSQL ? await bcrypt.compare(password, userDataSQL.password) : null
+    const response = (userDataSQL && passwordMatch) ? await generateResponse(userDataSQL, passwordMatch): failJson
     
     res.json(response)
 }

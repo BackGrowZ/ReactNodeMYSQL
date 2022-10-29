@@ -19,13 +19,10 @@ const Input = ({attribut, handleChange, errors, onBlur, disabledSubmit}) => {
     delete filtredAttribut.pattern
     delete filtredAttribut.patternError
     
-    if(type === "textarea") {
-        return <Textarea attribut={filtredAttribut} errors={errors} onBlur={onBlur} onChange={onChange}></Textarea>
-    } else if (type === "select"){
-        return <Select attribut={filtredAttribut} errors={errors} onChange={onChange}></Select>
-    } else if (type === "submit" || type === "reset"){
-        return <Button attribut={filtredAttribut} disabledSubmit={disabledSubmit} />
-    }else {
+    if(type === "textarea") return <Textarea attribut={filtredAttribut} errors={errors} onBlur={onBlur} onChange={onChange}></Textarea>
+    else if (type === "select") return <Select attribut={filtredAttribut} errors={errors} onChange={onChange}></Select>
+    else if (type === "submit" || type === "reset") return <Button attribut={filtredAttribut} disabledSubmit={disabledSubmit} />
+    else {
         return (
             <Fragment>
                 <input {...filtredAttribut} style={errorStyle} onBlur={() => onBlur(attribut.uid,attribut.value)} onChange={onChange} />
